@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "@/lib/validations/yupAuth";
 import { useLoginMutation } from "@/store/api";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/";
@@ -116,5 +116,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="max-w-sm mx-auto my-16 px-4 text-center text-sm text-zinc-500">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
