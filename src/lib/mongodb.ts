@@ -1,7 +1,21 @@
 import mongoose from "mongoose";
 import { logger } from "./logger";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/ecommerce_turbopack";
+function getSanitizedMongoUri(): string {
+  let uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/ecommerce_turbopack";
+  uri = uri.trim();
+  // Strip leading variable name if accidentally copied
+  if (uri.startsWith("MONGODB_URI=")) {
+    uri = uri.substring("MONGODB_URI=".length).trim();
+  }
+  // Strip surrounding quotes if present
+  if ((uri.startsWith('"') && uri.endsWith('"')) || (uri.startsWith("'") && uri.endsWith("'"))) {
+    uri = uri.slice(1, -1).trim();
+  }
+  return uri;
+}
+
+const MONGODB_URI = getSanitizedMongoUri();
 
 interface MongooseCache {
   conn: typeof mongoose | null;
